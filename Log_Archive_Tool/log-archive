@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+show_help_options() { 
+    cat <<'EOF'
+Usage:
+    log-archive <log_directory> [destination_directory] 
+    log-archive -h | --help
+Description:
+    Archives *.log files <log_directory> into a timestamped tar.gz file and
+    stores it in a new directory under [destination_directory]. If destination is not
+    provided, defaults to /tmp. 
+
+Arguments: 
+    log_directory           Required. Directory containing *.log files.
+    destination_directory   Optional. Where to store the output (default: /tmp)
+
+Examples: 
+    log-archive ./logs
+    log-archive /var/log /tmp 
+EOF
+}
+
+print_errors() {
+    # Print errors to stderr 
+    echo "Error: $*" >&2
+    echo "Run 'log-archive --help' for usage." >&2
+    exit 2
+}
+
+# ---= CLI parsing ----
+# Support help flags anywhere in argv
+
+for arg in "$@"; do 
+    if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then 
+        show_help_options
+        exit 0
+    fi
+done
+
+# Enforce the correct number of arguments
+
+if [[ $# -lt 1 || $# -gt 2 ]]; then 
+    print_errors "Invalid number of. arguments."
+fi 
+
+LOG_DIR="$1"
+DEST_DIR="${2:~/tmp}"
+
+# Basic validation
+if [[ ! -d "$LOG_DIR" ]]; then 
+    print_errors "Log directory does not exist or is not a directory: $LOG_DIR"
+fi 
+
+echo "LOG_DIR=$LOG_DIR"
+echo "DEST_DIR=$DEST_DIR"
