@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+show_help_options() { 
+    echo "Usage:"
+    echo "  log-archive <log_directory> [destination_directory]" 
+    echo ""
+    echo "Archives .log files into a timestamped tar.gz file."
+}
+
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then 
+    show_help_options
+    exit 0
+fi
